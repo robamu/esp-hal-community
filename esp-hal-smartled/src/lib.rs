@@ -57,18 +57,14 @@ pub enum LedAdapterError {
 
 fn led_pulses_for_clock(src_clock: u32) -> (u32, u32) {
     (
-        u32::from(PulseCode {
-            level1: true,
-            length1: ((SK68XX_T0H_NS * src_clock) / 1000) as u16,
-            level2: false,
-            length2: ((SK68XX_T0L_NS * src_clock) / 1000) as u16,
-        }),
-        u32::from(PulseCode {
-            level1: true,
-            length1: ((SK68XX_T1H_NS * src_clock) / 1000) as u16,
-            level2: false,
-            length2: ((SK68XX_T1L_NS * src_clock) / 1000) as u16,
-        }),
+        PulseCode::new(true,
+            ((SK68XX_T0H_NS * src_clock) / 1000) as u16,
+            false,
+            ((SK68XX_T0L_NS * src_clock) / 1000) as u16),
+        PulseCode::new(true,
+            ((SK68XX_T1H_NS * src_clock) / 1000) as u16,
+            false,
+            ((SK68XX_T1L_NS * src_clock) / 1000) as u16),
     )
 }
 
@@ -207,7 +203,7 @@ where
 
         // Perform the actual RMT operation. We use the u32 values here right away.
         let channel = self.channel.take().unwrap();
-        match channel.transmit(&self.rmt_buffer).wait() {
+        match channel.transmit(&self.rmt_buffer).unwrap().wait() {
             Ok(chan) => {
                 self.channel = Some(chan);
                 Ok(())
@@ -225,9 +221,9 @@ pub mod asynch {
     use super::*;
     use esp_hal::{
         clock::Clocks,
-        gpio::PeripheralOutput,
+        gpio::interconnect::PeripheralOutput,
         peripheral::Peripheral,
-        rmt::{asynch::TxChannelAsync, TxChannelCreatorAsync},
+        rmt::{TxChannelAsync, TxChannelCreatorAsync},
     };
 
     /// Function to calculate the required RMT buffer size for a given number of LEDs when using
