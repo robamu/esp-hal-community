@@ -14,7 +14,7 @@ targets  = ["riscv32imac-unknown-none-elf"]
 [dependencies]
 defmt             = { version = "0.3.10", optional = true }
 document-features = "0.2.10"
-esp-hal           = { version = "1.0.0-beta.0", features = ["unstable"] }
+esp-hal           = { version = "1.0.0-beta.0", features = ["unstable"], path = "../../esp-hal/esp-hal" }
 smart-leds-trait  = "0.3.1"
 
 [dev-dependencies]
@@ -24,7 +24,7 @@ esp-backtrace = { version = "0.15.0", features = [
     "panic-handler",
     "println",
 ] }
-esp-hal-embassy = "0.7"
+esp-hal-embassy = { version = "0.7", path = "../../esp-hal/esp-hal-embassy" }
 embassy-executor = "0.7.0"
 embassy-time = "0.4.0"
 esp-println = "0.13.0"
